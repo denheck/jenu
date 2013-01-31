@@ -1,15 +1,15 @@
 // jenu the javascript menu enhancer
 
-(function(global) {
+(function (global) {
     var methods = {
         // utility functions
         utility: {
-            getById: function(id) {
+            getById: function (id) {
                 return document.getElementById(id);
             },
             each: function (items, callback) {
                 for (var i = 0; i < items.length; i++) {
-                    callback.call(items[i]);
+                    callback.call(items[i], items[i]);
                 }
 
                 return items;
@@ -20,31 +20,42 @@
                     newItems.push(callback.call(items[i]));
                 }
                 return newItems;
+            },
+            filter: function (items, callback) {
+                var newItems = [];
+                this.each(items, function () {
+                    if (callback.call(this) === true) {
+                        newItems.push(this);
+                    }
+                });
+                return newItems;
             }
         },
         hideElement: function (element) {
             element.style.display = 'none';
         },
-        getChildListItems: function (element) {
-            return map(element.children, function() {
-                if (this.tagName === 'LI') {
-                    return this;
+        getChildren: function (element, tagName) {
+            return this.utility.filter(element.children, function () {
+                if (this.tagName === tagName) {
+                    return true;
                 }
             });
         },
-        getChildUnorderedLists: function (element) {
-
-        },
-        hideChildUnorderedLists: function(element) {
-
+        hideChildUnorderedLists: function (parentElement) {
+            this.utility.each(this.getChildren(parentElement, 'UL'), this.hideElement);
         }
     };
 
     global.jenu = {
-        init: function () {
-            // Hide all child ul elements
+        init: function (menuId) {
+            // hide sub menus
+            var menuElement = methods.utility.getById(menuId);
+            methods.utility.each(menuId.children, methods.hideChildUnorderedLists);
+
+            // add hover/click event to LIs with ULs
+            // show flyout menu when triggered
         },
-        _expose: function() {
+        _expose: function () {
             return methods;
         }
     };
