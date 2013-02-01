@@ -119,8 +119,8 @@
     };
 
     global.jenu = {
-        init: function (menuId) {
-            menu.init(dom.getById(menuId));
+        init: function (element) {
+            menu.init(element);
         },
         _expose: function () {
             return {
