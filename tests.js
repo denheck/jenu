@@ -1,7 +1,4 @@
-module("jenu tests");
-test("test utiliy.getById", function () {
-    ok(document.getElementById('qunit-fixture') === jenu._expose().utility.getById('qunit-fixture'));
-});
+module("jenu utility tests");
 
 test("test utility.each", function () {
     var num1;
@@ -70,30 +67,84 @@ test("test utility.filter", function () {
     );
 });
 
+module("jenu dom tests")
+
+test("test getById", function () {
+    ok(document.getElementById('qunit-fixture') === jenu._expose().dom.getById('qunit-fixture'));
+});
+
+test("tests attachEvent", function () {
+    var methods = jenu._expose();
+    var element = methods.dom.getById('link-1');
+    element.className = 'blah';
+
+    methods.dom.attachEvent(element, 'click', function () {
+        element.className = 'test';
+    });
+
+    element.click();
+    equal(element.className, 'test');
+});
+
 test("test hideElement", function () {
     var element = document.getElementById('test-menu');
     ok(element.style.display !== 'none');
-    jenu._expose().hideElement(element);
+    jenu._expose().dom.hideElement(element);
     ok(element.style.display === 'none');
+});
+
+test("test showElement", function () {
+    var element = document.getElementById('test-menu');
+    element.style.display = 'none';
+
+    jenu._expose().dom.showElement(element);
+    ok(element.style.display === 'block');
 });
 
 test("test getChildren", function () {
     var methods = jenu._expose();
-    var childListItems = methods.getChildren(methods.utility.getById('test-menu'), 'LI');
+    var childListItems = methods.dom.getChildren(methods.dom.getById('test-menu'), 'LI');
 
     for (var i = 0; i < childListItems.length; i++) {
         equal(childListItems[i].id, 'link-' + (i + 1));
     }
 
-    var childUnorderedLists = methods.getChildren(methods.utility.getById('link-2'), 'UL');
+    var childUnorderedLists = methods.dom.getChildren(methods.dom.getById('link-2'), 'UL');
 
     for (var i = 0; i < childUnorderedLists.length; i++) {
         equal(childUnorderedLists[i].id, 'second-level-ul-1');
     }
+
+    var noChildItems = methods.dom.getChildren(methods.dom.getById('test-menu'), 'B');
+    equal(noChildItems.length, 0);
 });
 
-test("test hideChildUnorderedLists", function () {
+test("test hasChild", function () {
     var methods = jenu._expose();
-    methods.hideChildUnorderedLists(methods.utility.getById('link-2'));
+
+    equal(methods.dom.hasChild(document.getElementById('link-1'), 'UL'), false)
+    equal(methods.dom.hasChild(document.getElementById('link-2'), 'UL'), true)
+    equal(methods.dom.hasChild(document.getElementById('link-3'), 'UL'), false)
+    equal(methods.dom.hasChild(document.getElementById('second-level-link-1'), 'UL'), true)
+    equal(methods.dom.hasChild(document.getElementById('third-level-link-1'), 'UL'), false)
+});
+
+test("test hideChildren", function () {
+    var methods = jenu._expose();
+    methods.dom.hideChildren(methods.dom.getById('link-2'), 'UL');
     equal(document.getElementById('second-level-ul-1').style.display, 'none');
 });
+
+test("test getSiblings", function () {
+    var methods = jenu._expose();
+    var siblings = methods.dom.getSiblings(methods.dom.getById('link-2'));
+
+    equal(siblings.length, 2);
+    equal(siblings[0].id, 'link-1');
+    equal(siblings[1].id, 'link-3');
+
+    siblings = methods.dom.getSiblings(methods.dom.getById('test-menu'));
+    equal(siblings.length, 0);
+});
+
+// TODO: test flyout and flyin
