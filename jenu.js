@@ -91,7 +91,7 @@
 
     var menu = {
         flyout: function (event) {
-            var targetElement = event.target;
+            var targetElement = event.target.tagName === 'A' ? event.target.parentElement : event.target;
 
             if (targetElement && targetElement.tagName === 'LI') {
                 // show current target LI flyout menu
