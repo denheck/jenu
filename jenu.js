@@ -95,6 +95,10 @@
             var targetElement = event.target.tagName === 'A' ? event.target.parentElement : event.target;
 
             if (targetElement && targetElement.tagName === 'LI') {
+                if (!dom.hasChild(targetElement, 'UL')) {
+                    return;
+                }
+
                 // show current target LI flyout menu
                 dom.showElement(dom.getChildren(targetElement, 'UL')[0]);
                 
