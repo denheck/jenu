@@ -91,6 +91,7 @@
 
     var menu = {
         flyout: function (event) {
+            // event delegation for list items
             var targetElement = event.target.tagName === 'A' ? event.target.parentElement : event.target;
 
             if (targetElement && targetElement.tagName === 'LI') {
@@ -105,16 +106,20 @@
         attachFlyOutEvent: function (element) {
             dom.attachEvent(element, 'mouseover', this.flyout);
         },
-        init: function (ulElement) {
-            var menuListItems = dom.getChildren(ulElement, 'LI');
-            
+        hideAllChildUls: function (ulElement) {
             // hide all LI elements containing UL elements
-            utility.each(menuListItems, function () {
-                dom.hideChildren(this, 'UL');
-            });
+            var menuListItems = dom.getChildren(ulElement, 'LI');
 
-            // event delegation for list items
-            menu.attachFlyOutEvent(ulElement)
+            utility.each(menuListItems, function (liElement) {
+                var childUl = dom.getChildren(liElement, 'UL')[0];
+
+                dom.hideElement(childUl);
+                this.hideAllChildUls(childUl);
+            }.bind(this));            
+        },
+        init: function (ulElement) {
+            this.hideAllChildUls(ulElement);
+            this.attachFlyOutEvent(ulElement)
         }
     };
 
