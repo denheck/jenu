@@ -90,7 +90,7 @@
     };
 
     var menu = {
-        flyout: function (event) {
+        flyOut: function (event) {
             // event delegation for list items
             var targetElement = event.target.tagName === 'A' ? event.target.parentElement : event.target;
 
@@ -104,7 +104,7 @@
             }
         },
         attachFlyOutEvent: function (element) {
-            dom.attachEvent(element, 'mouseover', this.flyout);
+            dom.attachEvent(element, 'mouseover', this.flyOut);
         },
         hideAllChildUls: function (ulElement) {
             // hide all LI elements containing UL elements
@@ -119,7 +119,7 @@
         },
         init: function (ulElement) {
             this.hideAllChildUls(ulElement);
-            this.attachFlyOutEvent(ulElement)
+            this.attachFlyOutEvent(ulElement);
         }
     };
 
