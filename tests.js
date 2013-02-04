@@ -67,6 +67,32 @@ test("test utility.filter", function () {
     );
 });
 
+test("test utility.merge", function () {
+    var merge = jenu._expose().utility.merge;
+    var testObject = {
+        param1: 'test',
+        param2: 'foo',
+        param3: 'bar'
+    };
+    var testObject2 = {
+        param3: 'blah',
+        param4: 10
+    };
+
+    var newObject = merge(testObject, testObject2);
+
+    equal(newObject.param1, testObject.param1);
+    equal(newObject.param2, testObject.param2);
+    equal(newObject.param3, testObject2.param3);
+    equal(newObject.param4, testObject2.param4);
+
+    var testObject3 = {};
+
+    var newObject2 = merge(testObject2, testObject3);
+    equal(newObject2.param3, testObject2.param3);
+    equal(newObject2.param4, testObject2.param4);
+});
+
 module("jenu dom tests")
 
 test("test getById", function () {
