@@ -25,6 +25,20 @@
                 }
             });
             return newItems;
+        },
+        // TODO: add support for deep copying
+        merge: function (defaults) {
+            for (var i = 1; i < arguments.length; i++) {
+                var additionalOptions = arguments[i];
+
+                for (var n in additionalOptions) {
+                    if (additionalOptions[n] !== undefined) {
+                        defaults[n] = additionalOptions[n];
+                    }
+                }
+            }
+
+            return defaults;
         }
     };
 
@@ -90,6 +104,11 @@
     };
 
     var menu = {
+        options: {
+            animationOptions: {
+                duration: 600
+            }
+        },
         flyOut: function (event) {
             // event delegation for list items
             var targetElement = event.target.tagName === 'A' ? event.target.parentElement : event.target;
@@ -127,8 +146,20 @@
         }
     };
 
+    // detect existence of jquery
+    if (typeof this.jQuery != 'undefined') {
+        dom.showElement = function (element) {
+            $(element).slideDown(menu.options.slideDown);
+        };
+
+        dom.hideElement = function (element) {
+            $(element).slideUp(menu.options.slideUp);
+        };
+    }
+
     global.jenu = {
-        init: function (element) {
+        init: function (element, options) {
+            menu.options = utility.merge(menu.options, options || {});
             menu.init(element);
         },
         _expose: function () {
