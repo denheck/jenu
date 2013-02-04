@@ -39,6 +39,9 @@
             }
 
             return defaults;
+        },
+        trim: function (str) {
+            return str.replace(/(?:(?:^|\n)\s+|\s+(?:$|\n))/g,'').replace(/\s+/g,' ');
         }
     };
 
@@ -100,6 +103,53 @@
             }
 
             return siblings;
+        },
+        addTextToElement: function (element, text) {
+            element.appendChild(document.createTextNode(text));
+            return element;
+        },
+        getStyle: function (elem, name) {
+            if (elem.style[name]) {
+                return elem.style[name];
+            } else if (elem.currentStyle) {
+                return elem.currentStyle[name];
+            } else if (document.defaultView && document.defaultView.getComputedStyle) {
+                name = name.replace(/([A-Z])/g, "-$1");
+                name = name.toLowerCase();
+                s = document.defaultView.getComputedStyle(elem, "");
+                return s && s.getPropertyValue(name);
+            } else {
+                return null;
+            }
+        },
+        getElementText: function (element) {
+            var nodes = element.childNodes;
+
+            for (var i = 0; i < nodes.length; i++) {
+                if (nodes[i].tagName === 'A' && nodes[i].firstChild.nodeType == 3 && utility.trim(nodes[i].firstChild.nodeValue)) {
+                    return nodes[i].firstChild.nodeValue;
+                } else if (nodes[i].nodeType == 3 && utility.trim(nodes[i].nodeValue)) {
+                    return nodes[i].nodeValue;
+                }
+            }
+        },
+        getTextWidth: function (element) {
+            var div = this.addTextToElement(document.createElement('div'), this.getElementText(element));
+            document.body.appendChild(div);
+            var styles = ['font-size','font-style', 'font-weight', 'font-family','line-height', 'text-transform', 'letter-spacing'];
+            utility.each(styles, function (style) {
+                element.style[style] = this.getStyle(element, style);
+            }.bind(this));
+
+            div.style.position = 'absolute';
+            div.style.left = -1000;
+            div.style.top = -1000;
+            div.display = 'none';
+
+            var width = (div.clientWidth + 1) + "px";
+            div.parentNode.removeChild(div);
+
+            return width;
         }
     };
 
@@ -129,11 +179,17 @@
         attachFlyOutEvent: function (element) {
             dom.attachEvent(element, 'mouseover', this.flyOut);
         },
+        resizeLi: function (liElement) {
+            liElement.style.width = dom.getTextWidth(liElement);
+        },
         hideAllChildUls: function (ulElement) {
             // hide all LI elements containing UL elements
             var menuListItems = dom.getChildren(ulElement, 'LI');
 
             utility.each(menuListItems, function (liElement) {
+                // resize li element to width of text
+                this.resizeLi(liElement);
+
                 var childUl = dom.getChildren(liElement, 'UL')[0];
 
                 if (childUl && childUl.style) {
