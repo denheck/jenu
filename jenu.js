@@ -136,7 +136,9 @@
             utility.each(menuListItems, function (liElement) {
                 var childUl = dom.getChildren(liElement, 'UL')[0];
 
-                dom.hideElement(childUl);
+                if (childUl && childUl.style) {
+                    childUl.style.display = 'none';
+                }
                 this.hideAllChildUls(childUl);
             }.bind(this));            
         },
