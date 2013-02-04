@@ -161,7 +161,7 @@
         },
         flyOut: function (event) {
             // event delegation for list items
-            var targetElement = event.target.tagName === 'A' ? event.target.parentElement : event.target;
+            var targetElement = event.target.parentElement;
 
             if (targetElement && targetElement.tagName === 'LI') {
                 if (!dom.hasChild(targetElement, 'UL')) {
@@ -179,6 +179,7 @@
         attachFlyOutEvent: function (element) {
             dom.attachEvent(element, 'mouseover', this.flyOut);
         },
+        // resize li element to width of text
         resizeLi: function (liElement) {
             liElement.style.width = dom.getTextWidth(liElement);
         },
@@ -187,9 +188,6 @@
             var menuListItems = dom.getChildren(ulElement, 'LI');
 
             utility.each(menuListItems, function (liElement) {
-                // resize li element to width of text
-                this.resizeLi(liElement);
-
                 var childUl = dom.getChildren(liElement, 'UL')[0];
 
                 if (childUl && childUl.style) {
