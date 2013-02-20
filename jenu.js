@@ -71,7 +71,7 @@
             element.style.display = 'block';
         },
         getChildren: function (element, tagName) {
-            if (!element || !element.hasOwnProperty('children')) {
+            if (!element || !element.children) {
                 return [];
             }
 
