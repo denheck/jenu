@@ -211,6 +211,13 @@
         dom.hideElement = function (element) {
             $(element).slideUp(menu.options.slideUp);
         };
+
+        // all ul elements with jenu class automatically become jenu menus
+        $(function () {
+            $('ul.jenu').each(function () {
+                jenu.init(this);
+            });
+        })
     }
 
     global.jenu = {
