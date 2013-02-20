@@ -155,8 +155,11 @@
 
     var menu = {
         options: {
-            animationOptions: {
-                duration: 600
+            slideDown: {
+                duration: 800
+            },
+            slideUp: {
+                duration: 800
             }
         },
         flyOut: function (event) {
