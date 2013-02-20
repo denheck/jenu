@@ -1,6 +1,16 @@
 // jenu the javascript menu enhancer
 
 (function (global) {
+    var options = {
+        slideDown: {
+            duration: 700
+        },
+        slideUp: {
+            duration: 700
+        },
+        stayOpen: false
+    };
+
     // utility functions
     var utility = {
         each: function (items, callback) {
@@ -154,14 +164,6 @@
     };
 
     var menu = {
-        options: {
-            slideDown: {
-                duration: 800
-            },
-            slideUp: {
-                duration: 800
-            }
-        },
         flyOut: function (event) {
             // event delegation for list items
             var targetElement = event.target.parentElement;
@@ -173,7 +175,7 @@
 
                 // show current target LI flyout menu
                 dom.showElement(dom.getChildren(targetElement, 'UL')[0]);
-                
+
                 utility.each(dom.getSiblings(targetElement), function () {
                     utility.each(dom.getChildren(this, 'UL'), dom.hideElement);
                 });
@@ -208,11 +210,11 @@
     // detect existence of jquery
     if (typeof this.jQuery != 'undefined') {
         dom.showElement = function (element) {
-            $(element).slideDown(menu.options.slideDown);
+            $(element).slideDown(options.slideDown);
         };
 
         dom.hideElement = function (element) {
-            $(element).slideUp(menu.options.slideUp);
+            $(element).slideUp(options.slideUp);
         };
 
         // all ul elements with jenu class automatically become jenu menus
@@ -224,8 +226,8 @@
     }
 
     global.jenu = {
-        init: function (element, options) {
-            menu.options = utility.merge(menu.options, options || {});
+        init: function (element, opts) {
+            options = utility.merge(options, opts || {});
             menu.init(element);
         },
         _expose: function () {
