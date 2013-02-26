@@ -3,12 +3,12 @@
 (function (global) {
     var options = {
         slideDown: {
-            duration: 700
+            duration: 600
         },
         slideUp: {
-            duration: 700
+            duration: 600
         },
-        stayOpen: false
+        stayOpen: null
     };
 
     // utility functions
@@ -177,7 +177,9 @@
                 dom.showElement(dom.getChildren(targetElement, 'UL')[0]);
 
                 utility.each(dom.getSiblings(targetElement), function () {
-                    utility.each(dom.getChildren(this, 'UL'), dom.hideElement);
+                    if (this !== options.stayOpen) {
+                        utility.each(dom.getChildren(this, 'UL'), dom.hideElement);
+                    }
                 });
             }
         },
@@ -204,6 +206,9 @@
         init: function (ulElement) {
             this.hideAllChildUls(ulElement);
             this.attachFlyOutEvent(ulElement);
+
+            // open stayOpen
+            dom.showElement(dom.getChildren(options.stayOpen, 'UL')[0]);
         }
     };
 
