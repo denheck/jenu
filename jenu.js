@@ -8,7 +8,8 @@
         slideUp: {
             duration: 600
         },
-        stayOpen: null
+        stayOpen: null,
+        hoverDelay: 850 // milliseconds
     };
 
     // utility functions
@@ -121,6 +122,21 @@
         }
     };
 
+    var timeoutQueue = {
+        queue: [],
+        add: function (timeoutId) {
+            this.queue.push(timeoutId);
+            return this;
+        },
+        clear: function () {
+            utility.each(this.queue, function () {
+                clearTimeout(this);
+            });
+            this.queue = [];
+            return this;
+        }
+    };
+
     var menu = {
         flyOut: function (event) {
             // event delegation for list items
@@ -131,9 +147,14 @@
                     return;
                 }
 
-                // show current target LI flyout menu
-                dom.showElement(dom.getChildren(targetElement, 'UL')[0]);
+                timeoutQueue.clear().add(
+                    setTimeout(function () {
+                        // show current target LI flyout menu
+                        dom.showElement(dom.getChildren(targetElement, 'UL')[0]);
+                    }, options.hoverDelay)
+                );
 
+                // hide all other submenus except stayOpen element
                 utility.each(dom.getSiblings(targetElement), function () {
                     if (this !== options.stayOpen) {
                         utility.each(dom.getChildren(this, 'UL'), dom.hideElement);
@@ -193,7 +214,8 @@
             return {
                 menu: menu,
                 dom: dom,
-                utility: utility
+                utility: utility,
+                timeoutQueue: timeoutQueue
             };
         }
     };
