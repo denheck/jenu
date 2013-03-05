@@ -9,7 +9,8 @@
             duration: 600
         },
         stayOpen: null,
-        hoverDelay: 850 // milliseconds
+        hoverDelay: 600, // milliseconds
+        closeOnMenuMouseOut: true
     };
 
     // utility functions
@@ -119,6 +120,17 @@
             } else {
                 return null;
             }
+        },
+        isChildOf: function (parentElement, childElement) {
+            if (parentElement === childElement) {
+                return false;
+            }
+
+            while (childElement && childElement !== parentElement) {
+                childElement = childElement.parentNode;
+            }
+
+            return childElement === parentElement;
         }
     };
 
@@ -147,6 +159,7 @@
                     return;
                 }
 
+                // delay menu flyout
                 timeoutQueue.clear().add(
                     setTimeout(function () {
                         // show current target LI flyout menu
@@ -154,16 +167,35 @@
                     }, options.hoverDelay)
                 );
 
-                // hide all other submenus except stayOpen element
-                utility.each(dom.getSiblings(targetElement), function () {
-                    if (this !== options.stayOpen) {
-                        utility.each(dom.getChildren(this, 'UL'), dom.hideElement);
-                    }
-                });
+                if (options.closeOnMenuMouseOut === false) {
+                    // hide all other submenus except stayOpen element
+                    utility.each(dom.getSiblings(targetElement), function () {
+                        if (this !== options.stayOpen) {
+                            utility.each(dom.getChildren(this, 'UL'), dom.hideElement);
+                        }
+                    });
+                }
             }
+        },
+        flyIn: function (event) {
+            if (dom.isChildOf(this, event.relatedTarget) || this === event.relatedTarget) {
+                return;
+            }
+
+            timeoutQueue.clear();
+
+            // hide all other submenus except stayOpen element
+            utility.each(dom.getChildren(this, 'LI'), function () {
+                if (this !== options.stayOpen) {
+                    utility.each(dom.getChildren(this, 'UL'), dom.hideElement);
+                }
+            });
         },
         attachFlyOutEvent: function (element) {
             dom.attachEvent(element, 'mouseover', this.flyOut);
+        },
+        attachFlyInEvent: function (ulElement) {
+            dom.attachEvent(ulElement, 'mouseout', this.flyIn);
         },
         hideAllChildUls: function (ulElement) {
             // hide all LI elements containing UL elements
@@ -176,11 +208,12 @@
                     childUl.style.display = 'none';
                 }
                 this.hideAllChildUls(childUl);
-            }.bind(this));            
+            }.bind(this));
         },
         init: function (ulElement) {
             this.hideAllChildUls(ulElement);
             this.attachFlyOutEvent(ulElement);
+            this.attachFlyInEvent(ulElement);
 
             // open stayOpen
             dom.showElement(dom.getChildren(options.stayOpen, 'UL')[0]);
