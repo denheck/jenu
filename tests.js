@@ -95,13 +95,9 @@ test("test utility.merge", function () {
 
 module("jenu dom tests")
 
-test("test getById", function () {
-    ok(document.getElementById('qunit-fixture') === jenu._expose().dom.getById('qunit-fixture'));
-});
-
 test("tests attachEvent", function () {
     var methods = jenu._expose();
-    var element = methods.dom.getById('link-1');
+    var element = document.getElementById('link-1');
     element.className = 'blah';
 
     methods.dom.attachEvent(element, 'click', function () {
@@ -129,19 +125,19 @@ test("test showElement", function () {
 
 test("test getChildren", function () {
     var methods = jenu._expose();
-    var childListItems = methods.dom.getChildren(methods.dom.getById('test-menu'), 'LI');
+    var childListItems = methods.dom.getChildren(document.getElementById('test-menu'), 'LI');
 
     for (var i = 0; i < childListItems.length; i++) {
         equal(childListItems[i].id, 'link-' + (i + 1));
     }
 
-    var childUnorderedLists = methods.dom.getChildren(methods.dom.getById('link-2'), 'UL');
+    var childUnorderedLists = methods.dom.getChildren(document.getElementById('link-2'), 'UL');
 
     for (var i = 0; i < childUnorderedLists.length; i++) {
         equal(childUnorderedLists[i].id, 'second-level-ul-1');
     }
 
-    var noChildItems = methods.dom.getChildren(methods.dom.getById('test-menu'), 'B');
+    var noChildItems = methods.dom.getChildren(document.getElementById('test-menu'), 'B');
     equal(noChildItems.length, 0);
 });
 
@@ -155,22 +151,45 @@ test("test hasChild", function () {
     equal(methods.dom.hasChild(document.getElementById('third-level-link-1'), 'UL'), false)
 });
 
-test("test hideChildren", function () {
-    var methods = jenu._expose();
-    methods.dom.hideChildren(methods.dom.getById('link-2'), 'UL');
-    equal(document.getElementById('second-level-ul-1').style.display, 'none');
-});
-
 test("test getSiblings", function () {
     var methods = jenu._expose();
-    var siblings = methods.dom.getSiblings(methods.dom.getById('link-2'));
+    var siblings = methods.dom.getSiblings(document.getElementById('link-2'));
 
     equal(siblings.length, 2);
     equal(siblings[0].id, 'link-1');
     equal(siblings[1].id, 'link-3');
 
-    siblings = methods.dom.getSiblings(methods.dom.getById('test-menu'));
+    siblings = methods.dom.getSiblings(document.getElementById('test-menu'));
     equal(siblings.length, 0);
+});
+
+module("jenu timeoutQueue tests");
+
+test("test add", function () {
+    var methods = jenu._expose();
+    methods.timeoutQueue.add(1);
+    methods.timeoutQueue.add(2);
+
+    equal(methods.timeoutQueue.queue.length, 2);
+    equal(methods.timeoutQueue.queue[0], 1);
+    equal(methods.timeoutQueue.queue[1], 2);
+});
+
+test("jenu clear", function () {
+    var methods = jenu._expose();
+
+    var num = 1;
+    methods.timeoutQueue.add(
+        setTimeout(function () { 
+            num = 2;
+        }, 500)
+    );
+    methods.timeoutQueue.clear();
+
+    setTimeout(function () {}, 600);
+
+    equal(methods.timeoutQueue.queue.length, 0);
+    equal(num, 1);
 });
 
 // TODO: test flyout and flyin
