@@ -153,6 +153,7 @@
         flyOut: function (event) {
             // event delegation for list items
             var targetElement = event.target.parentElement;
+            timeoutQueue.clear();
 
             if (targetElement && targetElement.tagName === 'LI') {
                 if (!dom.hasChild(targetElement, 'UL')) {
@@ -160,7 +161,7 @@
                 }
 
                 // delay menu flyout
-                timeoutQueue.clear().add(
+                timeoutQueue.add(
                     setTimeout(function () {
                         // show current target LI flyout menu
                         dom.showElement(dom.getChildren(targetElement, 'UL')[0]);
