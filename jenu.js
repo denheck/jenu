@@ -9,7 +9,7 @@
             duration: 600
         },
         stayOpen: null,
-        hoverDelay: 600, // milliseconds
+        hoverDelay: 100, // milliseconds
         closeOnMenuMouseOut: true
     };
 
@@ -193,7 +193,7 @@
             });
         },
         attachFlyOutEvent: function (element) {
-            dom.attachEvent(element, 'mouseover', this.flyOut);
+            dom.attachEvent(element, 'mousemove', this.flyOut);
         },
         attachFlyInEvent: function (ulElement) {
             dom.attachEvent(ulElement, 'mouseout', this.flyIn);
