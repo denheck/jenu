@@ -9,7 +9,7 @@
             duration: 600
         },
         stayOpen: null,
-        hoverDelay: 600, // milliseconds
+        hoverDelay: 100, // milliseconds
         closeOnMenuMouseOut: true
     };
 
@@ -153,6 +153,7 @@
         flyOut: function (event) {
             // event delegation for list items
             var targetElement = event.target.parentElement;
+            timeoutQueue.clear();
 
             if (targetElement && targetElement.tagName === 'LI') {
                 if (!dom.hasChild(targetElement, 'UL')) {
@@ -160,7 +161,7 @@
                 }
 
                 // delay menu flyout
-                timeoutQueue.clear().add(
+                timeoutQueue.add(
                     setTimeout(function () {
                         // show current target LI flyout menu
                         dom.showElement(dom.getChildren(targetElement, 'UL')[0]);
@@ -192,7 +193,7 @@
             });
         },
         attachFlyOutEvent: function (element) {
-            dom.attachEvent(element, 'mouseover', this.flyOut);
+            dom.attachEvent(element, 'mousemove', this.flyOut);
         },
         attachFlyInEvent: function (ulElement) {
             dom.attachEvent(ulElement, 'mouseout', this.flyIn);
